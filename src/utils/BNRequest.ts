@@ -1,14 +1,12 @@
 import Axios from 'axios'
 import * as md5 from 'md5'
+import * as qs from 'qs'
 import * as api from './api'
-/**
- * @param { Object } response 请求响应值
- */
-interface IResponse {
-  status: number // http状态码
-  data: IData // 返回的数据
-}
 
+interface IData {
+  result: object
+  error: any
+}
 /**
  * @description 参数配置接口
  */
@@ -18,14 +16,27 @@ interface IPramas {
   params: object
   id: number
 }
-
-interface IData {
-  result: object
-  error: any
+/**
+ * @param { Object } response 请求响应值
+ */
+interface IResponse {
+  status: number // http状态码
+  data: IData // 返回的数据
 }
+
 class BNRequest {
   constructor() {
     this.init()
+  }
+  /**
+   * @description Post请求
+   */
+  public post(url: string, method: string, param: object): Promise<{}> {
+    return Axios({
+      data: this.dealParams(method, param),
+      method: 'post',
+      url
+    })
   }
   /**
    * @description 初始化方法
@@ -44,6 +55,9 @@ class BNRequest {
      */
     Axios.interceptors.request.use(
       config => {
+        if (config.method === 'post') {
+          config.data = qs.stringify(config.data)
+        }
         return config
       },
       error => Promise.reject(error)
@@ -56,7 +70,7 @@ class BNRequest {
   /**
    * @description 处理响应数据
    */
-  
+
   private checkStatus(response: IResponse): object {
     const { status, data } = response
     if ((status === 200 || status === 304) && data.error) {
@@ -90,20 +104,11 @@ class BNRequest {
     const tempParams = params as any
     const isNull = !!params && (tempParams.sign = this.encrypt(tempParams))
     return {
+      id: 1,
       jsonrpc: '2.0',
       method,
-      params: isNull ? [tempParams] : [],
-      id: 1 } as IPramas
-  }
-  /**
-   * @description Post请求
-   */
-  public post(url: string, method: string, param: object): Promise<{}> {
-    return Axios({
-      method: 'post',
-      url,
-      data: this.dealParams(method, param)
-    })
+      params: isNull ? [tempParams] : []
+    }
   }
 }
 

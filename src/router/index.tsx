@@ -9,7 +9,7 @@ export default class RouteConfig extends React.Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Route path="" exact={true} component={App} />
+          <Route path="/" exact={true} component={App} />
           <Route path="/home" component={Home} />
           <Route path="/news" component={Home} />
           <Route path="/about" component={Home} />
