@@ -6,21 +6,21 @@ import logo from '@/assets/logo.svg';
 import 'bootstrap/dist/css/bootstrap.css';
 
 import Navbar from '../../components/Navbar';
-import Home from '../Home/index'
+import Home from '../Home'
 
 class App extends React.Component {
   public render() {
     return (
       <div className="App">
-        <Navbar/>
-        <img src={logo} className="App-logo" alt="logo" />
-        <section>
-          <Switch>
-            <Route path="/home" component={Home}/>
-            <Route path="/news" component={Home}/>
-            <Route path="/about" component={Home}/>
-          </Switch>
-        </section>
+      <Navbar/>
+      <img src={logo} className="App-logo" alt="logo" />
+      <section>
+        <Switch>
+          <Route path="/home" component={Home}/>
+          <Route path="/news" component={Home}/>
+          <Route path="/about" component={Home}/>
+        </Switch>
+      </section>
       </div>
     );
   }
