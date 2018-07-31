@@ -1,15 +1,16 @@
 import * as React from 'react'
+import * as API from 'Utils/api'
+
+import Navbar from 'Components/Navbar'
 import { Link, Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom'
-import Navbar from '../../components/Navbar'
-import BNRequest from '../../utils/BNRequest'
+import BNRequest from 'Utils/Fetch'
 import Board from './childs/borad'
 
 export default class Home extends React.Component<RouteComponentProps<{}>, {}> {
 
-  public componentDidMount() {
-    new BNRequest().post('/cms/bninfo.php?c=index', 'messageDetail', { coin_id: 10}).then(data => {
-      alert(data)
-    })
+  public async componentDidMount() {
+    const data = await BNRequest.post(API.coinDetail, 'messageDetail', { mes_id: 10})
+    alert(data)
   }
   public render() {
     const rootPath = this.props.match.path

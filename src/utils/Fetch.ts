@@ -1,42 +1,32 @@
-import Axios from 'axios'
+import Axios, { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios'
 import * as md5 from 'md5'
-import * as qs from 'qs'
-import * as api from './api'
+import * as API from './api'
 
-interface IData {
-  result: object
-  error: any
-}
 /**
  * @description 参数配置接口
  */
 interface IPramas {
-  jsonrpc: string
-  method: string
-  params: object
-  id: number
-}
-/**
- * @param { Object } response 请求响应值
- */
-interface IResponse {
-  status: number // http状态码
-  data: IData // 返回的数据
+  readonly id: number
+  readonly jsonrpc: string
+  readonly method: string
+  readonly params: object
 }
 
 class BNRequest {
+  /*axios请求实例*/
+  private fetch: AxiosInstance
   constructor() {
     this.init()
   }
   /**
    * @description Post请求
    */
-  public post(url: string, method: string, param: object): Promise<{}> {
-    return Axios({
-      data: this.dealParams(method, param),
-      method: 'post',
-      url
-    })
+  public post(url: string, method: string, param: object): AxiosPromise {
+    return this.fetch(
+      { data: this.dealParams(method, param),
+        method: 'POST',
+        url
+      })
   }
   /**
    * @description 初始化方法
@@ -45,33 +35,36 @@ class BNRequest {
     /**
      * @description Axios默认配置
      */
-    Axios.defaults.headers.post['Content-Type'] =
-      'application/x-www-form-urlencoded'
-    Axios.defaults.headers.post['X-Requested-With'] = 'XMLHttpRequest'
-    Axios.defaults.timeout = 5000
+    this.fetch =  Axios.create({
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      timeout: 3000
+    })
 
     /**
      * @description 全局请求拦截器
      */
-    Axios.interceptors.request.use(
+    this.fetch.interceptors.request.use(
       config => {
-        if (config.method === 'post') {
-          config.data = qs.stringify(config.data)
-        }
         return config
       },
       error => Promise.reject(error)
     )
-    Axios.interceptors.request.use(
-      response => this.checkStatus(response as IResponse),
+    /**
+     * @description 全局响应拦截器
+     */
+    this.fetch.interceptors.response.use(
+      response => this.checkStatus(response),
       error => Promise.reject(error)
     )
   }
+  
   /**
    * @description 处理响应数据
    */
-
-  private checkStatus(response: IResponse): object {
+  private checkStatus(response: AxiosResponse): AxiosPromise {
     const { status, data } = response
     if ((status === 200 || status === 304) && data.error) {
       const { message } = data.error
@@ -93,7 +86,7 @@ class BNRequest {
         }
         return `${result}&${curValue}=${params[curValue]}`
       }, '')
-      return md5(api.SSH_KEY + md5(secticyStr))
+      return md5(API.SSH_KEY + md5(secticyStr))
     }
     return false
   }
@@ -112,4 +105,4 @@ class BNRequest {
   }
 }
 
-export default BNRequest
+export default new BNRequest()
