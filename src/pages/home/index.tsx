@@ -6,7 +6,16 @@ import { Link, Redirect, Route, RouteComponentProps, Switch } from 'react-router
 import BNRequest from 'Utils/Fetch'
 import Board from './childs/borad'
 
-export default class Home extends React.Component<RouteComponentProps<{}>, {}> {
+interface IHomeState {
+  readonly hello: string, 
+  readonly list: string[]
+}
+
+interface IHomeProps extends IHomeState {
+  name: string
+}
+
+export default class Home extends React.Component<RouteComponentProps<{}>, IHomeProps> {
 
   public async componentDidMount() {
     const data = await BNRequest.post(API.coinDetail, 'messageDetail', { mes_id: 10})
@@ -19,6 +28,7 @@ export default class Home extends React.Component<RouteComponentProps<{}>, {}> {
         <Navbar/>
         <div className="container">
           <h5>{this.props.match.path}</h5>
+          <div>获取state值</div>
           <div className="row">
             <Link className="btn" to={`${rootPath}/a`}>a</Link>
             <Link className="btn" to={`${rootPath}/b`}>b</Link>

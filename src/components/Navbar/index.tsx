@@ -1,7 +1,6 @@
 import imgLogo from 'Assets/icon@2x.png'
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
-
 import './_style.scss'
 
 interface INavItem {

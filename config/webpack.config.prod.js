@@ -181,8 +181,7 @@ module.exports = {
                       options: {
                         importLoaders: 1,
                         minimize: true,
-                        sourceMap: shouldUseSourceMap,
-                        modules: true
+                        sourceMap: shouldUseSourceMap
                       },
                     },
                     require.resolve('sass-loader'),
